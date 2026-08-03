@@ -49,4 +49,22 @@ internal static class OpenMeteoClient
         }
         return rows;
     }
+
+    internal static async Task<(string? Sunrise, string? Sunset)> FetchSunTimes(DateOnly today)
+    {
+        var dateStr = today.ToString("yyyy-MM-dd", Formatting.Inv);
+        var url =
+            "https://api.open-meteo.com/v1/forecast"
+            + $"?latitude={OcLat.ToString(Formatting.Inv)}&longitude={OcLon.ToString(Formatting.Inv)}"
+            + "&daily=sunrise,sunset"
+            + "&timezone=America%2FNew_York"
+            + $"&start_date={dateStr}&end_date={dateStr}";
+        using var doc = JsonDocument.Parse(await SharedHttp.Client.GetStringAsync(url));
+        var daily  = doc.RootElement.GetProperty("daily");
+        var srStr  = daily.GetProperty("sunrise")[0].GetString();
+        var ssStr  = daily.GetProperty("sunset")[0].GetString();
+        var sunrise = srStr is not null ? DateTime.Parse(srStr, Formatting.Inv).ToString("h:mm tt", Formatting.Inv) : null;
+        var sunset  = ssStr is not null ? DateTime.Parse(ssStr, Formatting.Inv).ToString("h:mm tt", Formatting.Inv) : null;
+        return (sunrise, sunset);
+    }
 }

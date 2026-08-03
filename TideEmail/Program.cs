@@ -40,15 +40,16 @@ internal static class Program
             ? $"  Water temp: {waterTemp.Value.ToString("0.0", Formatting.Inv)}°F (avg of {readingCount} lowest readings, last 24 hr)"
             : "  Water temp unavailable, continuing without it.");
 
-        Console.WriteLine("Fetching Open-Meteo weather forecast");
+        Console.WriteLine("Fetching Open-Meteo weather forecast and sun times");
         var weather = await OpenMeteoClient.FetchWeather(today);
+        var (sunrise, sunset) = await OpenMeteoClient.FetchSunTimes(today);
 
         Console.WriteLine("Generating tide narrative via Claude");
-        var narrative = await NarrativeGenerator.Generate(today, tides, weather, waterTemp);
+        var narrative = await NarrativeGenerator.Generate(today, tides, weather, waterTemp, sunrise, sunset);
 
         var subject = $"Tide Report — OC 136th St — {Formatting.ToDate(today).ToString("ddd MMM d", Formatting.Inv)}";
-        var html    = EmailBuilder.BuildHtml(today, tides, narrative, weather, waterTemp, readingCount);
-        var text    = EmailBuilder.BuildText(today, tides, narrative, weather, waterTemp, readingCount);
+        var html    = EmailBuilder.BuildHtml(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset);
+        var text    = EmailBuilder.BuildText(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset);
 
         Console.WriteLine($"Sending email to {recipient}");
         await EmailSender.Send(subject, html, text, gmailAddress, gmailPassword, recipient);

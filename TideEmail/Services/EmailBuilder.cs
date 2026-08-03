@@ -14,9 +14,11 @@ internal static class EmailBuilder
     private const string UrlNoaaStation = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8570283";
     private const string UrlEpaUv       = "https://www.epa.gov/sunsafety/uv-index-scale-0";
     private const string UrlOpenMeteo   = "https://open-meteo.com/";
+    private const string UrlSunTimes    = "https://www.timeanddate.com/sun/usa/ocean-city-md";
 
     internal static string BuildHtml(DateOnly today, List<TidePrediction> tides, string narrative,
-                                     List<WeatherHour> weather, double? waterTemp, int readingCount)
+                                     List<WeatherHour> weather, double? waterTemp, int readingCount,
+                                     string? sunrise = null, string? sunset = null)
     {
         var dateLabel = Formatting.ToDate(today).ToString("dddd, MMMM d, yyyy", Formatting.Inv);
 
@@ -69,6 +71,7 @@ internal static class EmailBuilder
     </div>
 
     {{WaterTempHtml(waterTemp, readingCount)}}
+    {{SunTimesHtml(sunrise, sunset)}}
 
     <div style="padding:0 28px 20px;">
       <div style="font-size:12px;font-weight:bold;color:#555;margin-bottom:6px;
@@ -125,7 +128,8 @@ internal static class EmailBuilder
     }
 
     internal static string BuildText(DateOnly today, List<TidePrediction> tides, string narrative,
-                                     List<WeatherHour> weather, double? waterTemp, int readingCount)
+                                     List<WeatherHour> weather, double? waterTemp, int readingCount,
+                                     string? sunrise = null, string? sunset = null)
     {
         var dateLabel = Formatting.ToDate(today).ToString("dddd, MMMM d, yyyy", Formatting.Inv);
         var lines = new List<string>
@@ -139,6 +143,14 @@ internal static class EmailBuilder
         if (waterTemp is not null)
         {
             lines.Add($"Water Temp: {waterTemp.Value.ToString("0.0", Formatting.Inv)}°F (avg of {readingCount} lowest readings in 24 hrs, Ocean City Inlet)");
+            lines.Add("");
+        }
+        if (sunrise is not null || sunset is not null)
+        {
+            var parts = new List<string>();
+            if (sunrise is not null) parts.Add($"Sunrise: {sunrise}");
+            if (sunset  is not null) parts.Add($"Sunset:  {sunset}");
+            lines.Add(string.Join("   |   ", parts));
             lines.Add("");
         }
         lines.AddRange(
@@ -195,5 +207,23 @@ internal static class EmailBuilder
                + "🌊 Water Temp:</a> "
                + $"<span style='font-size:18px;font-weight:bold;color:#0a3d6b;'>{waterTemp.Value.ToString("0.0", Formatting.Inv)}°F</span>"
                + $"{note}</div>";
+    }
+
+    private static string SunTimesHtml(string? sunrise, string? sunset)
+    {
+        if (sunrise is null && sunset is null) return "";
+        var parts = new List<string>();
+        if (sunrise is not null)
+            parts.Add("<div style='flex:1;padding:10px 16px;background:#fff8e8;"
+                      + "border-left:4px solid #d4860a;border-radius:4px;font-size:14px;color:#333;'>"
+                      + $"<a href='{UrlSunTimes}' {Lk} style='font-weight:bold;color:#333;text-decoration:none;'>"
+                      + $"🌅 Sunrise:</a> {sunrise}</div>");
+        if (sunset is not null)
+            parts.Add("<div style='flex:1;padding:10px 16px;background:#f2ecf8;"
+                      + "border-left:4px solid #7c4db5;border-radius:4px;font-size:14px;color:#333;'>"
+                      + $"<a href='{UrlSunTimes}' {Lk} style='font-weight:bold;color:#333;text-decoration:none;'>"
+                      + $"🌇 Sunset:</a> {sunset}</div>");
+        return "<div style='margin:0 28px 16px;display:flex;gap:12px;'>"
+               + string.Join("", parts) + "</div>";
     }
 }

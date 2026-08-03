@@ -11,15 +11,20 @@ namespace TideEmail.Services;
 internal static class NarrativeGenerator
 {
     internal static async Task<string> Generate(DateOnly today, List<TidePrediction> tides,
-                                                List<WeatherHour> weather, double? waterTemp)
+                                                List<WeatherHour> weather, double? waterTemp,
+                                                string? sunrise, string? sunset)
     {
         var waterLine = waterTemp is not null
             ? $"\nOcean water temperature (avg of the lowest readings over the last 24 hours): {waterTemp.Value.ToString("0.0", Formatting.Inv)}°F"
+            : "";
+        var sunLine = (sunrise is not null || sunset is not null)
+            ? $"\nSunrise: {sunrise ?? "N/A"}  |  Sunset: {sunset ?? "N/A"}"
             : "";
         var message =
             $"Today is {Formatting.ToDate(today).ToString("dddd, MMMM d, yyyy", Formatting.Inv)}. "
             + "Here are today's tide predictions:\n" + string.Join("\n", TideSummaryLines(tides))
             + waterLine
+            + sunLine
             + "\n\nWeather forecast for Ocean City, MD:\n" + string.Join("\n", WeatherSummaryLines(weather));
 
         var client = new AnthropicClient(); // reads ANTHROPIC_API_KEY from env
