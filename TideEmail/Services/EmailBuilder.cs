@@ -9,9 +9,11 @@ internal static class EmailBuilder
 {
     // Source URLs — used for clickable links in the HTML email
     private const string Lk = "target='_blank' rel='noopener noreferrer'"; // shared link attributes
-    private const string UrlNoaaTides   = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8570283";
-    private const string UrlNoaaWater   = "https://tidesandcurrents.noaa.gov/physocean.html?id=8570283";
-    private const string UrlNoaaStation = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8570283";
+    private const string UrlNoaaTidesNorth  = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8570283";
+    private const string UrlNoaaTidesSouth  = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8558690";
+    private const string UrlNoaaWater       = "https://tidesandcurrents.noaa.gov/physocean.html?id=8558690";
+    private const string UrlNoaaStationNorth = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8570283";
+    private const string UrlNoaaStationSouth = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8558690";
     private const string UrlEpaUv       = "https://www.epa.gov/sunsafety/uv-index-scale-0";
     private const string UrlOpenMeteo   = "https://open-meteo.com/";
     private const string UrlSunTimes    = "https://www.timeanddate.com/sun/usa/ocean-city-md";
@@ -78,7 +80,9 @@ internal static class EmailBuilder
     <div style="padding:0 28px 20px;">
       <div style="font-size:12px;font-weight:bold;color:#555;margin-bottom:6px;
                   text-transform:uppercase;letter-spacing:.05em;">
-        <a href='{{UrlNoaaTides}}' {{Lk}} style="color:#555;text-decoration:none;">Tides</a>
+        <a href='{{UrlNoaaTidesNorth}}' {{Lk}} style="color:#555;text-decoration:none;">Tides</a>
+        &nbsp;<span style="color:#bbb;">|</span>&nbsp;
+        <a href='{{UrlNoaaTidesSouth}}' {{Lk}} style="color:#555;text-decoration:none;">Avg of 2 stations</a>
       </div>
       <table style="width:100%;border-collapse:collapse;">
         <thead>
@@ -117,9 +121,10 @@ internal static class EmailBuilder
     </div>
 
     <div style="padding:12px 28px 20px;font-size:12px;color:#888;">
-      Tide predictions and water temperature from
-      <a href='{{UrlNoaaStation}}' {{Lk}} style="color:#888;">NOAA Tides &amp; Currents,
-      Station 8570283</a> (Ocean City Inlet, MD). Heights above MLLW. Times in Eastern Time.<br>
+      Tide predictions averaged from NOAA Tides &amp; Currents stations
+      <a href='{{UrlNoaaStationNorth}}' {{Lk}} style="color:#888;">8570283 (Ocean City Inlet, MD)</a>
+      and <a href='{{UrlNoaaStationSouth}}' {{Lk}} style="color:#888;">8558690 (Lewes, DE)</a>.
+      Water temperature from station 8558690. Heights above MLLW. Times in Eastern Time.<br>
       Weather forecast from <a href='{{UrlOpenMeteo}}' {{Lk}} style="color:#888;">Open-Meteo</a>.
       UV scale from <a href='{{UrlEpaUv}}' {{Lk}} style="color:#888;">EPA</a>.
     </div>
@@ -187,8 +192,8 @@ internal static class EmailBuilder
         lines.AddRange(
         [
             "",
-            "Source: NOAA Tides & Currents, Station 8570283 (Ocean City Inlet, MD)",
-            "Heights above MLLW. Times in Eastern Time.",
+            "Tides averaged from NOAA Tides & Currents stations 8570283 (Ocean City Inlet, MD) and 8558690 (Lewes, DE).",
+            "Water temperature from station 8558690. Heights above MLLW. Times in Eastern Time.",
             "Weather: Open-Meteo (open-meteo.com)",
         ]);
         return string.Join("\n", lines);
