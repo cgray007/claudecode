@@ -78,7 +78,7 @@ internal static class NoaaClient
     /// <summary>
     /// Returns (avg temp °F, reading count) from the previous 24 hours.
     /// Fetches yesterday + today, filters to readings within the last 24 hours,
-    /// then averages the 20 lowest readings (all of them when fewer than 20).
+    /// then averages the 10 lowest readings (all of them when fewer than 10).
     /// Returns (null, 0) on failure or no data.
     /// </summary>
     internal static async Task<(double? AvgTempF, int ReadingCount)> FetchWaterTemp(DateOnly today)
@@ -86,7 +86,7 @@ internal static class NoaaClient
         var yesterday = today.AddDays(-1);
         var url = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
                   + $"?begin_date={yesterday.ToString("yyyyMMdd", Formatting.Inv)}&end_date={today.ToString("yyyyMMdd", Formatting.Inv)}"
-                  + $"&station={StationSouth}&product=water_temperature&time_zone=lst_ldt"
+                  + $"&station={StationNorth}&product=water_temperature&time_zone=lst_ldt"
                   + "&units=english&format=json";
         try
         {
@@ -108,7 +108,7 @@ internal static class NoaaClient
             }
             if (values.Count > 0)
             {
-                var lowest = values.OrderBy(v => v).Take(20).ToList();
+                var lowest = values.OrderBy(v => v).Take(10).ToList();
                 return (lowest.Average(), lowest.Count);
             }
         }

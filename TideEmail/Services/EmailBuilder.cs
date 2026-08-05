@@ -11,7 +11,7 @@ internal static class EmailBuilder
     private const string Lk = "target='_blank' rel='noopener noreferrer'"; // shared link attributes
     private const string UrlNoaaTidesNorth  = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8570283";
     private const string UrlNoaaTidesSouth  = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8558690";
-    private const string UrlNoaaWater       = "https://tidesandcurrents.noaa.gov/physocean.html?id=8558690";
+    private const string UrlNoaaWater       = "https://tidesandcurrents.noaa.gov/physocean.html?id=8570283";
     private const string UrlNoaaStationNorth = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8570283";
     private const string UrlNoaaStationSouth = "https://tidesandcurrents.noaa.gov/stationhome.html?id=8558690";
     private const string UrlEpaUv       = "https://www.epa.gov/sunsafety/uv-index-scale-0";
@@ -124,7 +124,7 @@ internal static class EmailBuilder
       Tide predictions averaged from NOAA Tides &amp; Currents stations
       <a href='{{UrlNoaaStationNorth}}' {{Lk}} style="color:#888;">8570283 (Ocean City Inlet, MD)</a>
       and <a href='{{UrlNoaaStationSouth}}' {{Lk}} style="color:#888;">8558690 (Lewes, DE)</a>.
-      Water temperature from station 8558690. Heights above MLLW. Times in Eastern Time.<br>
+      Water temperature from station 8570283. Heights above MLLW. Times in Eastern Time.<br>
       Weather forecast from <a href='{{UrlOpenMeteo}}' {{Lk}} style="color:#888;">Open-Meteo</a>.
       UV scale from <a href='{{UrlEpaUv}}' {{Lk}} style="color:#888;">EPA</a>.
     </div>
@@ -193,7 +193,7 @@ internal static class EmailBuilder
         [
             "",
             "Tides averaged from NOAA Tides & Currents stations 8570283 (Ocean City Inlet, MD) and 8558690 (Lewes, DE).",
-            "Water temperature from station 8558690. Heights above MLLW. Times in Eastern Time.",
+            "Water temperature from station 8570283. Heights above MLLW. Times in Eastern Time.",
             "Weather: Open-Meteo (open-meteo.com)",
         ]);
         return string.Join("\n", lines);
