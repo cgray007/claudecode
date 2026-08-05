@@ -15,7 +15,7 @@ namespace TideEmail.Services;
 internal static class NoaaClient
 {
     private const string StationNorth = "8570283"; // Ocean City (Inlet), MD
-    private const string StationSouth = "8558690"; // Lewes, DE
+    private const string StationSouth = "8558690"; // Indian River Inlet, DE
 
     internal static async Task<List<TidePrediction>> FetchTides(DateOnly today)
     {

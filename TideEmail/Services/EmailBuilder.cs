@@ -123,7 +123,7 @@ internal static class EmailBuilder
     <div style="padding:12px 28px 20px;font-size:12px;color:#888;">
       Tide predictions averaged from NOAA Tides &amp; Currents stations
       <a href='{{UrlNoaaStationNorth}}' {{Lk}} style="color:#888;">8570283 (Ocean City Inlet, MD)</a>
-      and <a href='{{UrlNoaaStationSouth}}' {{Lk}} style="color:#888;">8558690 (Lewes, DE)</a>.
+      and <a href='{{UrlNoaaStationSouth}}' {{Lk}} style="color:#888;">8558690 (Indian River Inlet, DE)</a>.
       Water temperature from station 8570283. Heights above MLLW. Times in Eastern Time.<br>
       Weather forecast from <a href='{{UrlOpenMeteo}}' {{Lk}} style="color:#888;">Open-Meteo</a>.
       UV scale from <a href='{{UrlEpaUv}}' {{Lk}} style="color:#888;">EPA</a>.
@@ -192,7 +192,7 @@ internal static class EmailBuilder
         lines.AddRange(
         [
             "",
-            "Tides averaged from NOAA Tides & Currents stations 8570283 (Ocean City Inlet, MD) and 8558690 (Lewes, DE).",
+            "Tides averaged from NOAA Tides & Currents stations 8570283 (Ocean City Inlet, MD) and 8558690 (Indian River Inlet, DE).",
             "Water temperature from station 8570283. Heights above MLLW. Times in Eastern Time.",
             "Weather: Open-Meteo (open-meteo.com)",
         ]);
