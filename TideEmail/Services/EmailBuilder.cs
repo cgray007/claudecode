@@ -18,7 +18,8 @@ internal static class EmailBuilder
 
     internal static string BuildHtml(DateOnly today, List<TidePrediction> tides, string narrative,
                                      List<WeatherHour> weather, double? waterTemp, int readingCount,
-                                     string? sunrise = null, string? sunset = null)
+                                     string? sunrise = null, string? sunset = null,
+                                     string? moonName = null, string? moonEmoji = null, double moonIllumination = 0)
     {
         var dateLabel = Formatting.ToDate(today).ToString("dddd, MMMM d, yyyy", Formatting.Inv);
 
@@ -72,6 +73,7 @@ internal static class EmailBuilder
 
     {{WaterTempHtml(waterTemp, readingCount)}}
     {{SunTimesHtml(sunrise, sunset)}}
+    {{MoonPhaseHtml(moonName, moonEmoji, moonIllumination)}}
 
     <div style="padding:0 28px 20px;">
       <div style="font-size:12px;font-weight:bold;color:#555;margin-bottom:6px;
@@ -129,7 +131,8 @@ internal static class EmailBuilder
 
     internal static string BuildText(DateOnly today, List<TidePrediction> tides, string narrative,
                                      List<WeatherHour> weather, double? waterTemp, int readingCount,
-                                     string? sunrise = null, string? sunset = null)
+                                     string? sunrise = null, string? sunset = null,
+                                     string? moonName = null, string? moonEmoji = null, double moonIllumination = 0)
     {
         var dateLabel = Formatting.ToDate(today).ToString("dddd, MMMM d, yyyy", Formatting.Inv);
         var lines = new List<string>
@@ -151,6 +154,11 @@ internal static class EmailBuilder
             if (sunrise is not null) parts.Add($"Sunrise: {sunrise}");
             if (sunset  is not null) parts.Add($"Sunset:  {sunset}");
             lines.Add(string.Join("   |   ", parts));
+            lines.Add("");
+        }
+        if (moonName is not null)
+        {
+            lines.Add($"Moon:  {moonEmoji} {moonName} ({moonIllumination.ToString("0.0", Formatting.Inv)}% illuminated)");
             lines.Add("");
         }
         lines.AddRange(
@@ -225,5 +233,22 @@ internal static class EmailBuilder
                       + $"🌇 Sunset:</a> {sunset}</div>");
         return "<div style='margin:0 28px 16px;display:flex;gap:12px;'>"
                + string.Join("", parts) + "</div>";
+    }
+
+    private static string MoonPhaseHtml(string? moonName, string? moonEmoji, double moonIllumination)
+    {
+        if (moonName is null) return "";
+        var pct = moonIllumination.ToString("0.0", Formatting.Inv);
+        // Filled bar using a simple inline progress strip
+        var barWidth = (int)Math.Round(moonIllumination);
+        var bar = "<div style='margin-top:6px;height:6px;border-radius:3px;background:#ddd;'>"
+                  + $"<div style='width:{barWidth}%;height:100%;border-radius:3px;background:#555;'></div></div>";
+        return "<div style='margin:0 28px 16px;padding:10px 16px;"
+               + "background:#f5f5f0;border-left:4px solid #555;border-radius:4px;"
+               + "font-size:14px;color:#333;'>"
+               + $"<span style='font-weight:bold;'>{moonEmoji} Moon Phase:</span> "
+               + $"{moonName} &mdash; <span style='font-weight:bold;'>{pct}%</span> illuminated"
+               + bar
+               + "</div>";
     }
 }

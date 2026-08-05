@@ -44,12 +44,15 @@ internal static class Program
         var weather = await OpenMeteoClient.FetchWeather(today);
         var (sunrise, sunset) = await OpenMeteoClient.FetchSunTimes(today);
 
+        var (moonName, moonEmoji, moonIllumination) = MoonPhase.Calculate(today);
+        Console.WriteLine($"  Moon phase: {moonEmoji} {moonName} ({moonIllumination:0.0}% illuminated)");
+
         Console.WriteLine("Generating tide narrative via Claude");
-        var narrative = await NarrativeGenerator.Generate(today, tides, weather, waterTemp, sunrise, sunset);
+        var narrative = await NarrativeGenerator.Generate(today, tides, weather, waterTemp, sunrise, sunset, moonName, moonIllumination);
 
         var subject = $"Tide Report — OC 136th St — {Formatting.ToDate(today).ToString("ddd MMM d", Formatting.Inv)}";
-        var html    = EmailBuilder.BuildHtml(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset);
-        var text    = EmailBuilder.BuildText(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset);
+        var html    = EmailBuilder.BuildHtml(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset, moonName, moonEmoji, moonIllumination);
+        var text    = EmailBuilder.BuildText(today, tides, narrative, weather, waterTemp, readingCount, sunrise, sunset, moonName, moonEmoji, moonIllumination);
 
         Console.WriteLine($"Sending email to {recipient}");
         await EmailSender.Send(subject, html, text, gmailAddress, gmailPassword, recipient);
